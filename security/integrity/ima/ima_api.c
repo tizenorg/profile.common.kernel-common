@@ -169,14 +169,14 @@ err_out:
  * Returns IMA_MEASURE, IMA_APPRAISE mask.
  *
  */
-int ima_get_action(struct inode *inode, int mask, int function)
+int ima_get_action(struct dentry *dentry, int mask, int function)
 {
 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE;
 
 	if (!ima_appraise)
 		flags &= ~IMA_APPRAISE;
 
-	return ima_match_policy(inode, function, mask, flags);
+	return ima_match_policy(dentry, function, mask, flags);
 }
 
 /*
