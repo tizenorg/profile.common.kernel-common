@@ -155,7 +155,8 @@ const char *ima_d_path(struct path *path, char **pathbuf);
 const char *ima_dentry_path(struct dentry *dentry, char **pathbuf, int mask);
 
 /* IMA policy related functions */
-enum ima_hooks { FILE_CHECK = 1, MMAP_CHECK, BPRM_CHECK, MODULE_CHECK, FIRMWARE_CHECK, POST_SETATTR };
+enum ima_hooks { FILE_CHECK = 1, MMAP_CHECK, BPRM_CHECK, MODULE_CHECK,
+		 FIRMWARE_CHECK, DIR_CHECK, POST_SETATTR};
 
 int ima_match_policy(struct dentry *dentry, enum ima_hooks func, int mask,
 		     int flags);
