@@ -32,6 +32,9 @@
 #endif
 
 int evm_initialized;
+int evm_enabled;
+int evm_fixmode;
+int evm_forcefix = 0;
 
 static char *integrity_status_msg[] = {
 	"pass", "fail", "no_label", "no_xattrs", "unknown"
@@ -59,11 +62,12 @@ char *evm_config_xattrnames[] = {
 	NULL
 };
 
-static int evm_fixmode;
 static int __init evm_set_fixmode(char *str)
 {
-	if (strncmp(str, "fix", 3) == 0)
+	if (strncmp(str, "fix", 3) == 0) {
 		evm_fixmode = 1;
+		evm_forcefix = 1;
+	}
 	return 0;
 }
 __setup("evm=", evm_set_fixmode);
@@ -245,7 +249,7 @@ enum integrity_status evm_verifyxattr(struct dentry *dentry,
 				      void *xattr_value, size_t xattr_value_len,
 				      struct integrity_iint_cache *iint)
 {
-	if (!evm_initialized || !evm_protected_xattr(xattr_name))
+	if (!evm_enabled || !evm_protected_xattr(xattr_name))
 		return INTEGRITY_UNKNOWN;
 
 	if (!iint) {
@@ -269,7 +273,7 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
 {
 	struct inode *inode = dentry->d_inode;
 
-	if (!evm_initialized || !S_ISREG(inode->i_mode) || evm_fixmode)
+	if (!evm_enabled || !S_ISREG(inode->i_mode) || evm_fixmode)
 		return 0;
 	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
 }
@@ -374,7 +378,7 @@ int evm_inode_removexattr(struct dentry *dentry, const char *xattr_name)
 void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
 			     const void *xattr_value, size_t xattr_value_len)
 {
-	if (!evm_initialized || (!evm_protected_xattr(xattr_name)
+	if (!evm_enabled || (!evm_protected_xattr(xattr_name)
 				 && !posix_xattr_acl(xattr_name)))
 		return;
 
@@ -392,7 +396,7 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
 {
 	struct inode *inode = dentry->d_inode;
 
-	if (!evm_initialized || !evm_protected_xattr(xattr_name))
+	if (!evm_enabled || !evm_protected_xattr(xattr_name))
 		return;
 
 	mutex_lock(&inode->i_mutex);
@@ -434,7 +438,7 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
  */
 void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
 {
-	if (!evm_initialized)
+	if (!evm_enabled)
 		return;
 
 	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
@@ -451,7 +455,7 @@ int evm_inode_init_security(struct inode *inode,
 	struct evm_ima_xattr_data *xattr_data;
 	int rc;
 
-	if (!evm_initialized || !evm_protected_xattr(lsm_xattr->name))
+	if (!evm_enabled || !evm_protected_xattr(lsm_xattr->name))
 		return 0;
 
 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
