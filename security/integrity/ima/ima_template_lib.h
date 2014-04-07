@@ -46,4 +46,8 @@ int ima_eventsig_init(struct integrity_iint_cache *iint, struct file *file,
 		      const unsigned char *filename,
 		      struct evm_ima_xattr_data *xattr_value, int xattr_len,
 		      struct ima_field_data *field_data);
+int ima_eventstatus_init(struct integrity_iint_cache *iint, struct file *file,
+			 const unsigned char *filename,
+			 struct evm_ima_xattr_data *xattr_value, int xattr_len,
+			 struct ima_field_data *field_data);
 #endif /* __LINUX_IMA_TEMPLATE_LIB_H */

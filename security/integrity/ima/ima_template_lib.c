@@ -340,3 +340,34 @@ int ima_eventsig_init(struct integrity_iint_cache *iint, struct file *file,
 out:
 	return rc;
 }
+
+int ima_eventstatus_init(struct integrity_iint_cache *iint, struct file *file,
+			 const unsigned char *filename,
+			 struct evm_ima_xattr_data *xattr_value, int xattr_len,
+			 struct ima_field_data *field_data)
+{
+	u8 status = INTEGRITY_UNKNOWN;
+
+	if (!iint)
+		goto out;
+
+	switch (iint->last_function) {
+	case MMAP_CHECK:
+		status = iint->ima_mmap_status;
+		break;
+	case BPRM_CHECK:
+		status = iint->ima_bprm_status;
+		break;
+	case MODULE_CHECK:
+		status = iint->ima_module_status;
+		break;
+	case FILE_CHECK:
+	default:
+		status = iint->ima_file_status;
+		break;
+	}
+
+out:
+	return ima_write_template_field_data(&status, sizeof(status),
+					     DATA_FMT_HEX, field_data);
+}
