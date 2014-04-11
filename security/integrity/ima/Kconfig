@@ -155,3 +155,17 @@ config IMA_APPRAISE_SIGNED_INIT
 	default n
 	help
 	   This option requires user-space init to be signed.
+
+config IMA_POLICY_LOADER
+	bool "Path based policy loading interface"
+	depends on IMA_TRUSTED_KEYRING
+	select INTEGRITY_FILE_READ
+	default n
+	help
+	  This option enables path based signed policy loading interface.
+	  Policy signature must be provided in the <policy>.sig file
+	  along with the policy. When this option is enabled, kernel
+	  tries to load default policy from /etc/ima_policy.
+
+	  Loading policy is like:
+	  echo /etc/ima/ima_policy > /sys/kernel/security/ima/policy

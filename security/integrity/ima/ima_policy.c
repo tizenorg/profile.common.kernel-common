@@ -17,6 +17,9 @@
 #include <linux/parser.h>
 #include <linux/slab.h>
 #include <linux/genhd.h>
+#ifdef CONFIG_IMA_POLICY_LOADER
+#include <linux/file.h>
+#endif
 
 #include "ima.h"
 
@@ -773,3 +776,74 @@ void ima_delete_rules(void)
 	}
 	mutex_unlock(&ima_rules_mutex);
 }
+
+#ifdef CONFIG_IMA_POLICY_LOADER
+
+ssize_t ima_read_policy(char *path)
+{
+	char *data, *datap, *sig;
+	int rc, psize, pathlen = strlen(path);
+	char *p, *sigpath;
+	struct {
+		struct ima_digest_data hdr;
+		char digest[IMA_MAX_DIGEST_SIZE];
+	} hash;
+
+	if (path[0] != '/')
+		return ima_parse_add_rule(path);
+
+	/* remove \n */
+	datap = path;
+	strsep(&datap, "\n");
+
+	/* we always want signature? */
+	sigpath = __getname();
+	if (!sigpath)
+		return -ENOMEM;
+
+	rc = integrity_read_file(path, &data);
+	if (rc < 0)
+		goto free_path;
+
+	psize = rc;
+	datap = data;
+
+	sprintf(sigpath, "%s.sig", path);
+	/* we always want signature? */
+	rc = integrity_read_file(sigpath, &sig);
+	if (rc < 0)
+		goto free_data;
+
+	hash.hdr.algo = ima_hash_algo;
+	ima_get_hash_algo((void *)sig, rc, &hash.hdr);
+	ima_calc_buffer_hash(data, psize, &hash.hdr);
+	rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+				     (const char *)sig, rc,
+				     hash.hdr.digest, hash.hdr.length);
+	if (rc) {
+		pr_err("integrity_digsig_verify() = %d\n", rc);
+		goto free_sig;
+	}
+
+	while (psize > 0 && (p = strsep(&datap, "\n"))) {
+		pr_debug("rule: %s\n", p);
+		rc = ima_parse_add_rule(p);
+		if (rc < 0)
+			break;
+		psize -= rc;
+	}
+free_sig:
+	kfree(sig);
+free_data:
+	kfree(data);
+free_path:
+	__putname(sigpath);
+	if (rc < 0)
+		return rc;
+	else if (psize)
+		return -EINVAL;
+	else
+		return pathlen;
+}
+
+#endif
