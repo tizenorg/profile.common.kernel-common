@@ -163,6 +163,15 @@ bool ima_default_policy(void);
 ssize_t ima_parse_add_rule(char *);
 void ima_delete_rules(void);
 
+#ifdef CONFIG_IMA_POLICY_LOADER
+ssize_t ima_read_policy(char *path);
+#else
+static inline ssize_t ima_read_policy(char *data)
+{
+	return ima_parse_add_rule(data);
+}
+#endif
+
 /* Appraise integrity measurements */
 #define IMA_APPRAISE_ENFORCE	0x01
 #define IMA_APPRAISE_FIX	0x02

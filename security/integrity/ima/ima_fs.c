@@ -273,7 +273,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
 	if (copy_from_user(data, buf, datalen))
 		goto out;
 
-	result = ima_parse_add_rule(data);
+	result = ima_read_policy(data);
 out:
 	if (result < 0)
 		valid_policy = 0;
