@@ -172,6 +172,14 @@ static inline ssize_t ima_read_policy(char *data)
 }
 #endif
 
+#ifdef CONFIG_IMA_LOAD_POLICY
+void ima_load_policy(char *path);
+#else
+static inline void ima_load_policy(char *path)
+{
+}
+#endif
+
 /* Appraise integrity measurements */
 #define IMA_APPRAISE_ENFORCE	0x01
 #define IMA_APPRAISE_FIX	0x02
