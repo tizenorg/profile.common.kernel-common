@@ -170,6 +170,14 @@ config IMA_POLICY_LOADER
 	  Loading policy is like:
 	  echo /etc/ima/ima_policy > /sys/kernel/security/ima/policy
 
+config IMA_POLICY_REPLACEABLE
+	bool "Allows to replace policy at runtime"
+	depends on IMA_POLICY_LOADER
+	default n
+	help
+	  Enabling this option allows to replace policy at runtime.
+	  Only signed policy is allowed.
+
 config IMA_LOAD_POLICY
 	bool "Load IMA policy from the kernel"
 	depends on IMA_POLICY_LOADER
