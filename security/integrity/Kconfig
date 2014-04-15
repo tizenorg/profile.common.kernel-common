@@ -62,6 +62,10 @@ config INTEGRITY_LOAD_KEYS
 config INTEGRITY_FILE_READ
 	def_bool n
 
+config INTEGRITY_LOAD_X509
+	select INTEGRITY_FILE_READ
+	def_bool n
+
 source security/integrity/ima/Kconfig
 source security/integrity/evm/Kconfig
 

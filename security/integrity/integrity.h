@@ -166,6 +166,15 @@ static inline int asymmetric_verify(struct key *keyring, const char *sig,
 }
 #endif
 
+#ifdef CONFIG_INTEGRITY_LOAD_X509
+int integrity_load_x509(const unsigned int id, char *path);
+#else
+static inline int integrity_load_x509(const unsigned int id, char *path)
+{
+	return 0;
+}
+#endif
+
 #ifdef CONFIG_INTEGRITY_AUDIT
 /* declarations */
 void integrity_audit_msg(int audit_msgno, struct inode *inode,
