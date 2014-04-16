@@ -131,3 +131,20 @@ config IMA_TRUSTED_KEYRING
 	help
 	   This option requires that all keys added to the .ima
 	   keyring be signed by a key on the system trusted keyring.
+
+config IMA_LOAD_X509
+	bool "Load X509 certificate to the '.ima' trusted keyring"
+	depends on IMA_TRUSTED_KEYRING
+	select INTEGRITY_LOAD_X509
+	select INTEGRITY_LOAD_KEYS
+	default n
+	help
+	   This option enables X509 certificate loading from the kernel
+	   to the '.ima' trusted keyring.
+
+config IMA_X509_PATH
+	string "IMA X509 certificate path"
+	depends on IMA_LOAD_X509
+	default "/etc/ima/x509_ima.der"
+	help
+	   This option defines IMA X509 certificate path.
