@@ -25,6 +25,12 @@
 #include <crypto/hash.h>
 #include "evm.h"
 
+#ifdef CONFIG_EVM_X509_PATH
+#define EVM_X509_PATH	CONFIG_EVM_X509_PATH
+#else
+#define EVM_X509_PATH	"/etc/ima/x509_evm.der"
+#endif
+
 int evm_initialized;
 
 static char *integrity_status_msg[] = {
@@ -466,6 +472,17 @@ out:
 	return rc;
 }
 EXPORT_SYMBOL_GPL(evm_inode_init_security);
+
+#ifdef CONFIG_EVM_LOAD_X509
+void __init evm_load_x509(void)
+{
+	int rc;
+
+	rc = integrity_load_x509(INTEGRITY_KEYRING_EVM, EVM_X509_PATH);
+	if (!rc)
+		evm_initialized |= EVM_STATE_X509_SET;
+}
+#endif
 
 static int __init init_evm(void)
 {

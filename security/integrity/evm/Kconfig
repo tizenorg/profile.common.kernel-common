@@ -73,3 +73,19 @@ config EVM_TRUSTED_KEYRING
 	help
 	   This option requires that all keys added to the .evm
 	   keyring be signed by a key on the system trusted keyring.
+
+config EVM_LOAD_X509
+	bool "Load X509 certificate to the '.evm' trusted keyring"
+	depends on EVM_TRUSTED_KEYRING
+	select INTEGRITY_LOAD_X509
+	default n
+	help
+	   This option enables X509 certificate loading from the kernel
+	   to the '.evm' trusted keyring.
+
+config EVM_X509_PATH
+	string "EVM X509 certificate path"
+	depends on EVM_LOAD_X509
+	default "/etc/ima/x509_evm.der"
+	help
+	   This option defines X509 certificate path.

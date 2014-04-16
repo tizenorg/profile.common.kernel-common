@@ -180,6 +180,14 @@ static inline void ima_load_x509(void)
 }
 #endif
 
+#ifdef CONFIG_EVM_LOAD_X509
+void __init evm_load_x509(void);
+#else
+static inline void evm_load_x509(void)
+{
+}
+#endif
+
 #ifdef CONFIG_INTEGRITY_TRUSTED_KEYRING
 int integrity_init_keyring(const unsigned int id);
 #else

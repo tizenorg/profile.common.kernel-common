@@ -138,5 +138,6 @@ int integrity_init_keyring(const unsigned int id)
 void __init integrity_load_keys(void)
 {
 	ima_load_x509();
+	evm_load_x509();
 }
 #endif
