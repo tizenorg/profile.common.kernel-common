@@ -62,6 +62,14 @@ static int __init evm_set_fixmode(char *str)
 }
 __setup("evm=", evm_set_fixmode);
 
+static int evm_load;
+static int __init evm_load_setup(char *str)
+{
+	evm_load = 1;
+	return 0;
+}
+__setup("evm_load", evm_load_setup);
+
 static void __init evm_init_config(void)
 {
 #ifdef CONFIG_EVM_ATTR_FSUUID
@@ -464,6 +472,11 @@ static int __init init_evm(void)
 	int error;
 
 	evm_init_config();
+
+#ifdef CONFIG_EVM_LOAD_KEY
+	if (evm_load)
+		evm_load_key(CONFIG_EVM_KEY_PATH, CONFIG_EVM_KMK_PATH);
+#endif
 
 	error = evm_init_secfs();
 	if (error < 0) {
