@@ -477,6 +477,9 @@ static int __init init_evm(void)
 	if (evm_load)
 		evm_load_key(CONFIG_EVM_KEY_PATH, CONFIG_EVM_KMK_PATH);
 #endif
+#ifdef CONFIG_EVM_TRUSTED_KEYRING
+	integrity_init_keyring(INTEGRITY_KEYRING_EVM);
+#endif
 
 	error = evm_init_secfs();
 	if (error < 0) {

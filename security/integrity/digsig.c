@@ -24,7 +24,11 @@
 static struct key *keyring[INTEGRITY_KEYRING_MAX];
 
 static const char *keyring_name[INTEGRITY_KEYRING_MAX] = {
+#ifndef CONFIG_EVM_TRUSTED_KEYRING
 	"_evm",
+#else
+	".evm",
+#endif
 	"_module",
 #ifndef CONFIG_IMA_TRUSTED_KEYRING
 	"_ima",
@@ -100,6 +104,7 @@ int integrity_load_x509(const unsigned int id, char *path)
 }
 #endif
 
+#ifdef CONFIG_INTEGRITY_TRUSTED_KEYRING
 int integrity_init_keyring(const unsigned int id)
 {
 	const struct cred *cred = current_cred();
@@ -121,6 +126,7 @@ int integrity_init_keyring(const unsigned int id)
 	}
 	return err;
 }
+#endif
 
 #ifdef CONFIG_INTEGRITY_LOAD_KEYS
 /*

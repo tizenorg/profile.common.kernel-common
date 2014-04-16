@@ -64,3 +64,12 @@ config EVM_KMK_PATH
 	default "/etc/ima/evm-kmk"
 	help
 	   This option defines EVM master key path.
+
+config EVM_TRUSTED_KEYRING
+	bool "Require all keys on the .evm keyring be signed"
+	depends on EVM && SYSTEM_TRUSTED_KEYRING
+	select INTEGRITY_TRUSTED_KEYRING
+	default n
+	help
+	   This option requires that all keys added to the .evm
+	   keyring be signed by a key on the system trusted keyring.

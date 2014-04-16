@@ -141,7 +141,6 @@ int integrity_kernel_read(struct file *file, loff_t offset,
 int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
 			    const char *digest, int digestlen);
 int integrity_read_file(const char *path, char **data);
-int integrity_init_keyring(const unsigned int id);
 #else
 
 static inline int integrity_digsig_verify(const unsigned int id,
@@ -150,16 +149,12 @@ static inline int integrity_digsig_verify(const unsigned int id,
 {
 	return -EOPNOTSUPP;
 }
-
-static inline int integrity_init_keyring(const unsigned int id)
-{
-	return 0;
-}
 #endif /* CONFIG_INTEGRITY_SIGNATURE */
 
 #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
 int asymmetric_verify(struct key *keyring, const char *sig,
 		      int siglen, const char *data, int datalen);
+
 #else
 static inline int asymmetric_verify(struct key *keyring, const char *sig,
 				    int siglen, const char *data, int datalen)
@@ -182,6 +177,15 @@ void __init ima_load_x509(void);
 #else
 static inline void ima_load_x509(void)
 {
+}
+#endif
+
+#ifdef CONFIG_INTEGRITY_TRUSTED_KEYRING
+int integrity_init_keyring(const unsigned int id);
+#else
+static inline int integrity_init_keyring(const unsigned int id)
+{
+	return 0;
 }
 #endif
 

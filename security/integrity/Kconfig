@@ -66,6 +66,11 @@ config INTEGRITY_LOAD_X509
 	select INTEGRITY_FILE_READ
 	def_bool n
 
+config INTEGRITY_TRUSTED_KEYRING
+	def_bool n
+	depends on IMA_TRUSTED_KEYRING || EVM_TRUSTED_KEYRING
+	select KEYS_DEBUG_PROC_KEYS
+
 source security/integrity/ima/Kconfig
 source security/integrity/evm/Kconfig
 
