@@ -175,6 +175,14 @@ static inline int integrity_load_x509(const unsigned int id, char *path)
 }
 #endif
 
+#ifdef CONFIG_IMA_LOAD_X509
+void __init ima_load_x509(void);
+#else
+static inline void ima_load_x509(void)
+{
+}
+#endif
+
 #ifdef CONFIG_INTEGRITY_AUDIT
 /* declarations */
 void integrity_audit_msg(int audit_msgno, struct inode *inode,
