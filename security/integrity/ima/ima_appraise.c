@@ -297,6 +297,9 @@ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file)
 	if (test_bit(IMA_DIGSIG, &iint->atomic_flags))
 		return;
 
+	if (ima_get_cache_status(iint, FILE_CHECK))
+		return; /* do not fix if failed in permissive mode */
+
 	rc = ima_collect_measurement(iint, file, NULL, NULL);
 	if (rc < 0)
 		return;
