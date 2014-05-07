@@ -70,6 +70,17 @@ static int __init ima_template_setup(char *str)
 }
 __setup("ima_template=", ima_template_setup);
 
+static struct ima_template_desc ima_template_fmt;
+
+static int __init ima_template_fmt_setup(char *str)
+{
+	ima_template_fmt.name = "ima-fmt";
+	ima_template_fmt.fmt = str;
+	ima_template = &ima_template_fmt;
+	return 1;
+}
+__setup("ima_template_fmt=", ima_template_fmt_setup);
+
 static struct ima_template_desc *lookup_template_desc(const char *name)
 {
 	int i;

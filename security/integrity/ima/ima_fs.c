@@ -120,7 +120,7 @@ static int ima_measurements_show(struct seq_file *m, void *v)
 	struct ima_template_entry *e;
 	int namelen;
 	u32 pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-	bool is_ima_template = false;
+	bool is_ima_template = false, is_imafmt_template = false;
 	int i;
 
 	/* get entry */
@@ -138,12 +138,22 @@ static int ima_measurements_show(struct seq_file *m, void *v)
 	/* 2nd: template digest */
 	ima_putc(m, e->digest, TPM_DIGEST_SIZE);
 
+	if (strcmp(e->template_desc->name, "ima-fmt") == 0)
+		is_imafmt_template = true;
+
 	/* 3rd: template name size */
 	namelen = strlen(e->template_desc->name);
+	if (is_imafmt_template)
+		namelen += 1 + strlen(e->template_desc->fmt);
 	ima_putc(m, &namelen, sizeof(namelen));
 
 	/* 4th:  template name */
-	ima_putc(m, e->template_desc->name, namelen);
+	seq_puts(m, e->template_desc->name);
+	if (is_imafmt_template) {
+		/* 4th+:  append template format */
+		seq_putc(m, ':');
+		seq_puts(m, e->template_desc->fmt);
+	}
 
 	/* 5th:  template length (except for 'ima' template) */
 	if (strcmp(e->template_desc->name, IMA_TEMPLATE_IMA_NAME) == 0)
@@ -215,6 +225,10 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
 
 	/* 3th:  template name */
 	seq_printf(m, " %s", e->template_desc->name);
+
+	if (strcmp(e->template_desc->name, "ima-fmt") == 0)
+		/* 3th+:  append template format */
+		seq_printf(m, ":%s", e->template_desc->fmt);
 
 	/* 4th:  template specific data */
 	for (i = 0; i < e->template_desc->num_fields; i++) {
