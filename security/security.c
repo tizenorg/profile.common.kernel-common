@@ -1102,6 +1102,90 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
 }
 EXPORT_SYMBOL(security_inode_getsecctx);
 
+int security_kdbus_domain_alloc(struct kdbus_domain *domain)
+{
+	return security_ops->kdbus_domain_alloc(domain);
+}
+EXPORT_SYMBOL(security_kdbus_domain_alloc);
+
+void security_kdbus_domain_free(struct kdbus_domain *domain)
+{
+	security_ops->kdbus_domain_free(domain);
+}
+EXPORT_SYMBOL(security_kdbus_domain_free);
+
+int security_kdbus_bus_alloc(struct kdbus_bus *bus)
+{
+	return security_ops->kdbus_bus_alloc(bus);
+}
+EXPORT_SYMBOL(security_kdbus_bus_alloc);
+
+void security_kdbus_bus_free(struct kdbus_bus *bus)
+{
+	security_ops->kdbus_bus_free(bus);
+}
+EXPORT_SYMBOL(security_kdbus_bus_free);
+
+int security_kdbus_send(const struct kdbus_bus *bus)
+{
+	return security_ops->kdbus_send(bus);
+}
+EXPORT_SYMBOL(security_kdbus_send);
+
+int security_kdbus_recv(const struct kdbus_bus *bus)
+{
+	return security_ops->kdbus_recv(bus);
+}
+EXPORT_SYMBOL(security_kdbus_recv);
+
+int security_kdbus_name_acquire(const struct kdbus_bus *bus, const char *name)
+{
+	return security_ops->kdbus_name_acquire(bus, name);
+}
+EXPORT_SYMBOL(security_kdbus_name_acquire);
+
+int security_kdbus_name_list(const struct kdbus_bus *bus)
+{
+	return security_ops->kdbus_name_list(bus);
+}
+EXPORT_SYMBOL(security_kdbus_name_list);
+
+int security_kdbus_ep_alloc(struct kdbus_ep *ep)
+{
+	return security_ops->kdbus_ep_alloc(ep);
+}
+EXPORT_SYMBOL(security_kdbus_ep_alloc);
+
+void security_kdbus_ep_free(struct kdbus_ep *ep)
+{
+	return security_ops->kdbus_ep_free(ep);
+}
+EXPORT_SYMBOL(security_kdbus_ep_free);
+
+int security_kdbus_connect(struct kdbus_conn *conn, const char *secctx, u32 seclen)
+{
+	return security_ops->kdbus_connect(conn, secctx, seclen);
+}
+EXPORT_SYMBOL(security_kdbus_connect);
+
+void security_kdbus_conn_free(struct kdbus_conn *conn)
+{
+	security_ops->kdbus_conn_free(conn);
+}
+EXPORT_SYMBOL(security_kdbus_conn_free);
+
+int security_kdbus_conn_info(const struct kdbus_conn *conn)
+{
+	return security_ops->kdbus_conn_info(conn);
+}
+EXPORT_SYMBOL(security_kdbus_conn_info);
+
+int security_kdbus_talk(const struct kdbus_conn *src, const struct kdbus_conn *dst)
+{
+	return security_ops->kdbus_talk(src, dst);
+}
+EXPORT_SYMBOL(security_kdbus_talk);
+
 #ifdef CONFIG_SECURITY_NETWORK
 
 int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk)
