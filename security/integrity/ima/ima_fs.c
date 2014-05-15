@@ -196,7 +196,7 @@ static const struct file_operations ima_measurements_ops = {
 	.release = seq_release,
 };
 
-void ima_print_digest(struct seq_file *m, u8 *digest, int size)
+void ima_print_hex(struct seq_file *m, u8 *digest, int size)
 {
 	int i;
 
@@ -221,7 +221,7 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
 	seq_printf(m, "%2d ", CONFIG_IMA_MEASURE_PCR_IDX);
 
 	/* 2nd: SHA1 template hash */
-	ima_print_digest(m, e->digest, TPM_DIGEST_SIZE);
+	ima_print_hex(m, e->digest, TPM_DIGEST_SIZE);
 
 	/* 3th:  template name */
 	seq_printf(m, " %s", e->template_desc->name);
