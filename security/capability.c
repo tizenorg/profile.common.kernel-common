@@ -585,17 +585,20 @@ static void cap_kdbus_bus_free(struct kdbus_bus *bus)
 {
 }
 
-static int cap_kdbus_send(const struct kdbus_bus *bus)
+static int cap_kdbus_send(const struct kdbus_conn *conn,
+			  const struct kdbus_bus *bus)
+
 {
 	return 0;
 }
 
-static int cap_kdbus_recv(const struct kdbus_bus *bus)
+static int cap_kdbus_recv(const struct kdbus_conn *conn,
+			  const struct kdbus_bus *bus)
 {
 	return 0;
 }
 
-static int cap_kdbus_name_acquire(const struct kdbus_bus *bus, const char *name)
+static int cap_kdbus_name_acquire(const struct kdbus_conn *conn, const char *name)
 {
 	return 0;
 }
@@ -605,16 +608,12 @@ static int cap_kdbus_name_list(const struct kdbus_bus *bus)
 	return 0;
 }
 
-static int cap_kdbus_ep_alloc(struct kdbus_ep *ep)
+static int cap_kdbus_ep_create(const struct kdbus_bus *bus)
 {
 	return 0;
 }
 
-static void cap_kdbus_ep_free(struct kdbus_ep *ep)
-{
-}
-
-static int cap_kdbus_ep_setpolicy(struct kdbus_ep *ep)
+static int cap_kdbus_ep_setpolicy(const struct kdbus_bus *bus)
 {
 	return 0;
 }
@@ -1143,8 +1142,7 @@ void __init security_fixup_ops(struct security_operations *ops)
 	set_to_cap_if_null(ops, kdbus_recv);
 	set_to_cap_if_null(ops, kdbus_name_acquire);
 	set_to_cap_if_null(ops, kdbus_name_list);
-	set_to_cap_if_null(ops, kdbus_ep_alloc);
-	set_to_cap_if_null(ops, kdbus_ep_free);
+	set_to_cap_if_null(ops, kdbus_ep_create);
 	set_to_cap_if_null(ops, kdbus_ep_setpolicy);
 	set_to_cap_if_null(ops, kdbus_connect);
 	set_to_cap_if_null(ops, kdbus_conn_free);

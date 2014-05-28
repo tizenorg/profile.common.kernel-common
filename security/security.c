@@ -1126,21 +1126,21 @@ void security_kdbus_bus_free(struct kdbus_bus *bus)
 }
 EXPORT_SYMBOL(security_kdbus_bus_free);
 
-int security_kdbus_send(const struct kdbus_bus *bus)
+int security_kdbus_send(const struct kdbus_conn *conn, const struct kdbus_bus *bus)
 {
-	return security_ops->kdbus_send(bus);
+	return security_ops->kdbus_send(conn, bus);
 }
 EXPORT_SYMBOL(security_kdbus_send);
 
-int security_kdbus_recv(const struct kdbus_bus *bus)
+int security_kdbus_recv(const struct kdbus_conn *conn, const struct kdbus_bus *bus)
 {
-	return security_ops->kdbus_recv(bus);
+	return security_ops->kdbus_recv(conn, bus);
 }
 EXPORT_SYMBOL(security_kdbus_recv);
 
-int security_kdbus_name_acquire(const struct kdbus_bus *bus, const char *name)
+int security_kdbus_name_acquire(const struct kdbus_conn *conn, const char *name)
 {
-	return security_ops->kdbus_name_acquire(bus, name);
+	return security_ops->kdbus_name_acquire(conn, name);
 }
 EXPORT_SYMBOL(security_kdbus_name_acquire);
 
@@ -1150,17 +1150,17 @@ int security_kdbus_name_list(const struct kdbus_bus *bus)
 }
 EXPORT_SYMBOL(security_kdbus_name_list);
 
-int security_kdbus_ep_alloc(struct kdbus_ep *ep)
+int security_kdbus_ep_create(struct kdbus_bus *bus)
 {
-	return security_ops->kdbus_ep_alloc(ep);
+	return security_ops->kdbus_ep_create(bus);
 }
-EXPORT_SYMBOL(security_kdbus_ep_alloc);
+EXPORT_SYMBOL(security_kdbus_ep_create);
 
-void security_kdbus_ep_free(struct kdbus_ep *ep)
+int security_kdbus_ep_setpolicy(struct kdbus_bus *bus)
 {
-	return security_ops->kdbus_ep_free(ep);
+	return security_ops->kdbus_ep_setpolicy(bus);
 }
-EXPORT_SYMBOL(security_kdbus_ep_free);
+EXPORT_SYMBOL(security_kdbus_ep_setpolicy);
 
 int security_kdbus_connect(struct kdbus_conn *conn, const char *secctx, u32 seclen)
 {
