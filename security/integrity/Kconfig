@@ -59,6 +59,9 @@ config INTEGRITY_AUDIT
 config INTEGRITY_LOAD_KEYS
 	def_bool n
 
+config INTEGRITY_FILE_READ
+	def_bool n
+
 source security/integrity/ima/Kconfig
 source security/integrity/evm/Kconfig
 
