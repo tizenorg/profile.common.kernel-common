@@ -126,6 +126,9 @@ struct integrity_iint_cache {
  */
 struct integrity_iint_cache *integrity_iint_find(struct inode *inode);
 
+int integrity_kernel_read(struct file *file, loff_t offset,
+			  char *addr, unsigned long count);
+
 #define INTEGRITY_KEYRING_EVM		0
 #define INTEGRITY_KEYRING_MODULE	1
 #define INTEGRITY_KEYRING_IMA		2
@@ -135,7 +138,7 @@ struct integrity_iint_cache *integrity_iint_find(struct inode *inode);
 
 int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
 			    const char *digest, int digestlen);
-
+int integrity_read_file(const char *path, char **data);
 int integrity_init_keyring(const unsigned int id);
 #else
 
