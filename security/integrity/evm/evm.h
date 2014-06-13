@@ -21,6 +21,8 @@
 
 #include "../integrity.h"
 
+#define EVM_STATE_KEY_SET	0x0001
+
 extern int evm_initialized;
 extern char *evm_hmac;
 extern char *evm_hash;
