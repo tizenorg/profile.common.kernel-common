@@ -32,6 +32,18 @@ struct crypto_shash *hash_tfm;
 
 static DEFINE_MUTEX(mutex);
 
+int evm_set_key(void *key, int keylen)
+{
+	if (evm_initialized & EVM_STATE_KEY_SET)
+		return -EBUSY;
+	if (keylen > MAX_KEY_SIZE)
+		return -EINVAL;
+	memcpy(evmkey, key, keylen);
+	evm_initialized |= EVM_STATE_KEY_SET;
+	return 0;
+}
+EXPORT_SYMBOL_GPL(evm_set_key);
+
 static struct shash_desc *init_desc(char type)
 {
 	long rc;
@@ -40,6 +52,8 @@ static struct shash_desc *init_desc(char type)
 	struct shash_desc *desc;
 
 	if (type == EVM_XATTR_HMAC) {
+		if (!(evm_initialized & EVM_STATE_KEY_SET))
+			return ERR_PTR(-ENOKEY);
 		tfm = &hmac_tfm;
 		algo = evm_hmac;
 	} else {
@@ -242,6 +256,9 @@ int evm_init_key(void)
 	struct encrypted_key_payload *ekp;
 	int rc = 0;
 
+	if (evm_initialized & EVM_STATE_KEY_SET)
+		return -EBUSY;
+
 	evm_key = request_key(&key_type_encrypted, EVMKEY, NULL);
 	if (IS_ERR(evm_key))
 		return -ENOENT;
@@ -258,5 +275,7 @@ out:
 	memset(ekp->decrypted_data, 0, ekp->decrypted_datalen);
 	up_read(&evm_key->sem);
 	key_put(evm_key);
+	if (!rc)
+		evm_initialized |= EVM_STATE_KEY_SET;
 	return rc;
 }
