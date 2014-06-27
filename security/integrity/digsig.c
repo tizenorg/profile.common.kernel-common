@@ -84,3 +84,15 @@ int integrity_init_keyring(const unsigned int id)
 	}
 	return err;
 }
+
+#ifdef CONFIG_INTEGRITY_LOAD_KEYS
+/*
+ * integrity_load_keys - load integrity keys hook
+ *
+ * Hooks is called from init/main.c:kernel_init_freeable()
+ * when rootfs is ready
+ */
+void __init integrity_load_keys(void)
+{
+}
+#endif
