@@ -77,6 +77,7 @@
 #include <linux/sched_clock.h>
 #include <linux/context_tracking.h>
 #include <linux/random.h>
+#include <linux/integrity.h>
 
 #include <asm/io.h>
 #include <asm/bugs.h>
@@ -938,6 +939,9 @@ static noinline void __init kernel_init_freeable(void)
 	 * initmem segments and start the user-mode stuff..
 	 */
 
-	/* rootfs is available now, try loading default modules */
+	/* rootfs is available now */
+	/* try loading public keys */
+	integrity_load_keys();
+	/* try loading default modules */
 	load_default_modules();
 }

@@ -37,4 +37,13 @@ static inline void integrity_inode_free(struct inode *inode)
 	return;
 }
 #endif /* CONFIG_INTEGRITY */
+
+#ifdef CONFIG_INTEGRITY_LOAD_KEYS
+extern void __init integrity_load_keys(void);
+#else
+static inline void integrity_load_keys(void)
+{
+}
+#endif
+
 #endif /* _LINUX_INTEGRITY_H */
