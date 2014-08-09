@@ -408,6 +408,7 @@
 #define __NR_finit_module		(__NR_SYSCALL_BASE+379)
 #define __NR_sched_setattr		(__NR_SYSCALL_BASE+380)
 #define __NR_sched_getattr		(__NR_SYSCALL_BASE+381)
+#define __NR_memfd_create		(__NR_SYSCALL_BASE+385)
 
 /*
  * The following SWIs are ARM private.
