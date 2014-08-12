@@ -5,6 +5,9 @@
 
 %define upstream_version 3.14.2
 
+
+%define profile ivi
+
 %if !%{defined platform}
 %define platform default
 %endif
