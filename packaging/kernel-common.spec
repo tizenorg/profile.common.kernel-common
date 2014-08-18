@@ -16,6 +16,7 @@
 
 # Default arch config for tizen per arch (unless overiden after)
 %define kernel_image bzImage
+%define defconfig tizen_defconfig
 
 %define dtbs_supported 0
 %define modules_supported 1
@@ -29,11 +30,13 @@
 %ifarch %{arch_32bits}
 %define kernel_arch i386
 %define kernel_arch_subdir arch/x86
+%define defconfig %{profile}_x86_defconfig
 %endif
 
 %ifarch x86_64
 %define kernel_arch x86_64
 %define kernel_arch_subdir arch/x86
+%define defconfig %{profile}_%{kernel_arch}_defconfig
 %endif
 
 %ifarch %arm
@@ -42,14 +45,6 @@
 %define kernel_image zImage
 %define vdso_supported 0
 %define modules_supported 0
-%define defconfig tizen_defconfig
-%endif
-
-
-# default values
-
-%if !%{defined defconfig}
-%define defconfig %{kernel_arch}_defconfig
 %endif
 
 
