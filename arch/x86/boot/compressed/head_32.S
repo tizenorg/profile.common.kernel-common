@@ -59,7 +59,8 @@ ENTRY(efi_pe_entry)
 	call	make_boot_params
 	cmpl	$0, %eax
 	je	fail
-	movl	%esi, BP_code32_start(%eax)
+	leal	startup_32(%esi), %ecx
+	movl	%ecx, BP_code32_start(%eax)
 	popl	%ecx
 	pushl	%eax
 	pushl	%ecx
