@@ -5,6 +5,13 @@
 
 %define upstream_version 3.12.18
 
+%if !0%{?_with_emulator}
+ExclusiveArch:
+%else
+%define platform emulator
+ExclusiveArch: %{arch_32bits}
+%endif
+
 %if !%{defined platform}
 %define platform default
 %endif
@@ -31,6 +38,10 @@
 %define kernel_arch i386
 %define kernel_arch_subdir arch/x86
 %define defconfig %{profile}_x86_defconfig
+%if %platform == emulator
+%define defconfig %{kernel_arch}_tizen_emul_defconfig
+%define trace_supported 0
+%endif
 %endif
 
 %ifarch x86_64
@@ -48,7 +59,7 @@
 %endif
 
 
-Name: kernel-common
+Name: kernel-%{platform}
 Summary: Tizen kernel
 Group: System/Kernel
 License: GPL-2.0
