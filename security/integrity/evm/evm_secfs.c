@@ -64,7 +64,7 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
 	char temp[80];
 	int i;
 
-	if (!capable(CAP_SYS_ADMIN) || evm_initialized)
+	if (!capable(CAP_SYS_ADMIN) || (evm_initialized & EVM_STATE_KEY_SET))
 		return -EPERM;
 
 	if (count >= sizeof(temp) || count == 0)
