@@ -46,23 +46,19 @@ static struct dentry *evm_init_tpm;
 static ssize_t evm_read_key(struct file *filp, char __user *buf,
 			    size_t count, loff_t *ppos)
 {
-	char temp[2] = {'0', '\0'};
+	char temp[80];
 	ssize_t rc;
+	int mode = evm_initialized;
 
 	if (*ppos != 0)
 		return 0;
 
 #ifdef CONFIG_EVM_STATE_INTERFACE
-	if (!capable(CAP_SYS_ADMIN))
-		return -EPERM;
+	mode = evm_enabled;
+#endif
 
-	if (evm_initialized && evm_enabled)
-		temp[0] += evm_fixmode ? 2 : 1;
-#else  /* CONFIG_EVM_STATE_INTERFACE */
-	temp[0] += evm_initialized;
-#endif /* CONFIG_EVM_STATE_INTERFACE */
-
-	rc = simple_read_from_buffer(buf, count, ppos, temp, sizeof(temp));
+	sprintf(temp, "%d", mode);
+	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
 
 	return rc;
 }
@@ -83,7 +79,7 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
 			     size_t count, loff_t *ppos)
 {
 	char temp[80];
-	int i;
+	long mode;
 
 	if (!capable(CAP_SYS_ADMIN))
 		return -EPERM;
@@ -96,32 +92,25 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
 
 	temp[count] = '\0';
 
-	if ((sscanf(temp, "%d", &i) != 1) || ((i != 1)
-#ifdef CONFIG_EVM_STATE_INTERFACE
-			&& (i != 0) && (i != 2)
-#endif /* CONFIG_EVM_STATE_INTERFACE */
-			))
+	if (kstrtol(temp, 0, &mode))
 		return -EINVAL;
 
-	if (evm_initialized == 0) {
-		if (evm_init_key())
-			/* If EVM cannot be initialized
-			 * no more action should be taken */
-			return count;
-	}
+#ifndef CONFIG_EVM_STATE_INTERFACE
+	if (mode != 1)
+		return -EINVAL;
+#else
+	if (mode < 0 || mode > 2)
+		return -EINVAL;
+#endif
 
-	if (i == 1) {
-		evm_enabled = 1;
+	evm_init_key();
+
 #ifdef CONFIG_EVM_STATE_INTERFACE
-		if (!evm_forcefix)
-			evm_fixmode = 0;
-	} else if (i == 0)
+	if (mode && evm_initialized)
+		evm_enabled = evm_fixmode ? 2 : mode;
+	else
 		evm_enabled = 0;
-	else if (i == 2) {
-		evm_enabled = 1;
-		evm_fixmode = 1;
-#endif /* CONFIG_EVM_STATE_INTERFACE */
-	}
+#endif
 
 	return count;
 }

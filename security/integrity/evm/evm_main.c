@@ -31,10 +31,9 @@
 #define EVM_X509_PATH	"/etc/ima/x509_evm.der"
 #endif
 
-int evm_initialized;
 int evm_enabled;
+int evm_initialized;
 int evm_fixmode;
-int evm_forcefix = 0;
 
 static char *integrity_status_msg[] = {
 	"pass", "fail", "no_label", "no_xattrs", "unknown"
@@ -64,10 +63,8 @@ char *evm_config_xattrnames[] = {
 
 static int __init evm_set_fixmode(char *str)
 {
-	if (strncmp(str, "fix", 3) == 0) {
+	if (strncmp(str, "fix", 3) == 0)
 		evm_fixmode = 1;
-		evm_forcefix = 1;
-	}
 	return 0;
 }
 __setup("evm=", evm_set_fixmode);
@@ -273,7 +270,7 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
 {
 	struct inode *inode = dentry->d_inode;
 
-	if (!evm_enabled || !S_ISREG(inode->i_mode) || evm_fixmode)
+	if (!evm_enabled || !S_ISREG(inode->i_mode) || evm_enabled == 2)
 		return 0;
 	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
 }
@@ -483,8 +480,10 @@ void __init evm_load_x509(void)
 	int rc;
 
 	rc = integrity_load_x509(INTEGRITY_KEYRING_EVM, EVM_X509_PATH);
-	if (!rc)
+	if (!rc) {
 		evm_initialized |= EVM_STATE_X509_SET;
+		evm_enabled = evm_fixmode ? 2 : 1;
+	}
 }
 #endif
 
