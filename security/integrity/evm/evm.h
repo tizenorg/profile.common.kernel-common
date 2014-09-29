@@ -24,10 +24,9 @@
 #define EVM_STATE_KEY_SET	0x0001
 #define EVM_STATE_X509_SET	0x0002
 
+extern int evm_enabled;
 extern int evm_initialized;
 extern int evm_fixmode;
-extern int evm_forcefix;
-extern int evm_enabled;
 extern char *evm_hmac;
 extern char *evm_hash;
 

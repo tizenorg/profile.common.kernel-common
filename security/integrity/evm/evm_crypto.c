@@ -42,6 +42,7 @@ int evm_set_key(void *key, int keylen)
 		return -EINVAL;
 	memcpy(evmkey, key, keylen);
 	evm_initialized |= EVM_STATE_KEY_SET;
+	evm_enabled = evm_fixmode ? 2 : 1;
 	return 0;
 }
 EXPORT_SYMBOL_GPL(evm_set_key);
@@ -283,6 +284,7 @@ out:
 	key_put(evm_key);
 	if (!rc) {
 		evm_initialized |= EVM_STATE_KEY_SET;
+		evm_enabled = evm_fixmode ? 2 : 1;
 		pr_info("key initialized\n");
 	} else
 		pr_err("key initialization failed\n");
