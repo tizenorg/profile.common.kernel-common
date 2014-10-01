@@ -85,7 +85,7 @@ BuildRequires: u-boot-tools
 
 ExclusiveArch: %{arch_32bits} x86_64 armv7l
 
-Source0: %{name}-%{version}.tar.bz2
+Source0: kernel-common-%{version}.tar.bz2
 
 %description
 This package contains the Linux kernel for Tizen.
