@@ -197,8 +197,6 @@ int integrity_kernel_read(struct file *file, loff_t offset,
 		ret = file->f_op->read(file, buf, count, &offset);
 	else if (file->f_op->aio_read)
 		ret = do_sync_read(file, buf, count, &offset);
-	else if (file->f_op->read_iter)
-		ret = new_sync_read(file, buf, count, &offset);
 	set_fs(old_fs);
 	return ret;
 }
