@@ -117,13 +117,19 @@ err_out:
 #ifdef CONFIG_IMA_LOAD_X509
 void __init ima_load_x509(void)
 {
+    int ima_tmp;
+
 	if (ima_initialized) {
 		/* disable IMA to load the key, otherwise appraisal will fail */
 		ima_initialized = 0;
+		ima_tmp = ima_appraise;
+		ima_appraise = 0;
 		integrity_load_x509(INTEGRITY_KEYRING_IMA, IMA_X509_PATH);
-		if (ima_load)
-			ima_load_policy(IMA_POLICY_PATH);
+#ifdef CONFIG_IMA_LOAD_POLICY
+		ima_load_policy(IMA_POLICY_PATH);
+#endif
 		ima_initialized = 1;
+		ima_appraise = ima_tmp;
 	}
 }
 #endif
