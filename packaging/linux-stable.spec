@@ -3,7 +3,7 @@
 # from MeeGo/Moblin/Fedora
 #
 
-%define upstream_version 3.14.25
+%define upstream_version 3.14.28+ltsi
 
 %if !%{defined platform}
 %define platform default
