@@ -29,3 +29,7 @@ ifeq ($(LP64), 1)
 else
   IS_64_BIT := 0
 endif
+
+ifeq ($(ARCH), x86_64)
+  override ARCH := x86
+endif
