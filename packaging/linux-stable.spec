@@ -287,7 +287,11 @@ rm %{buildroot}/etc/bash_completion.d/perf
 
 # Dont package debug files
 rm -rf %{buildroot}/usr/lib/debug/.build-id
-rm -rf %{buildroot}/usr/lib/debug/lib/traceevent/plugins/*.debug
+%if ! %{trace_supported}
+rm %{buildroot}%{_bindir}/trace
+rm -rf %{buildroot}/usr/lib/debug/lib/traceevent
+rm -rf %{buildroot}/lib/traceevent
+%endif
 
 
 
@@ -389,5 +393,5 @@ fi
 %{_libexecdir}/perf-core
 %if %trace_supported
 %{_bindir}/trace
-/%{_lib}/traceevent/plugins/*.so
+/lib/traceevent/plugins/*.so
 %endif
