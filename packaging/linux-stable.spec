@@ -3,8 +3,8 @@
 # from MeeGo/Moblin/Fedora
 #
 
-%define extraversion .rc3
-%define upstream_version 4.0%{extraversion}
+%define extraversion %nil
+%define upstream_version 3.19.1%{extraversion}
 
 %if !%{defined platform}
 %define platform default
