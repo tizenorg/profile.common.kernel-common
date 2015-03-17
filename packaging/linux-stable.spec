@@ -172,7 +172,7 @@ counter events as well as various kernel internal events.
 ###
 %build
 # Make sure EXTRAVERSION says what we want it to say
-sed -i "s/^EXTRAVERSION.*/EXTRAVERSION = -%{release}-%{variant}/" Makefile
+sed -i "s/^EXTRAVERSION.*/EXTRAVERSION = %{extraversion}-%{release}-%{variant}/" Makefile
 
 # Build perf
 make -s -C tools/lib/traceevent ARCH=%{kernel_arch} %{?_smp_mflags}
